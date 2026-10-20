@@ -47,12 +47,15 @@ app.get('/api/clubes/:id', (req, res) => {
   return res.status(200).json(club)
 })
 
-// 3. GET /api/titulos/:club (Permite nombres con espacios o guiones, ej: colo-colo)
+// 3. GET /api/titulos/:club (Permite nombres con guiones, espacios y sin importar mayúsculas)
 app.get('/api/titulos/:club', (req, res) => {
-  const clubParam = req.params.club.trim().toLowerCase().replace(/-/g, ' ')
+  // Función auxiliar para limpiar: pasa a minúsculas, quita espacios y quita guiones
+  const normalizar = (texto) => texto.trim().toLowerCase().replace(/[- ]/g, '')
+
+  const busqueda = normalizar(req.params.club)
 
   const clubEncontrado = clubes.find(
-    c => c.nombre.toLowerCase() === clubParam
+    c => normalizar(c.nombre) === busqueda
   )
 
   if (!clubEncontrado) {
